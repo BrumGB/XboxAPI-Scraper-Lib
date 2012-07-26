@@ -283,12 +283,13 @@ class XboxAPI_Scraper {
      */
     private function limit_check( $input = FALSE )
     {
-        return true;
         if ( $input != FALSE )
             list( $this->API_Limit_current, $this->API_Limit ) = explode( '/', $input );
 
-        if ( $this->API_Limit_current > $this->API_Limit )
-            return FALSE;
+        if ( $this->API_Limit_current < $this->API_Limit )
+            return TRUE;
+
+        return FALSE;
     }
     //------------------------------------------------------------------
 
