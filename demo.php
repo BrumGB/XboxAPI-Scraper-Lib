@@ -9,8 +9,14 @@
     // include our lib
     require_once('XboxAPI_Scraper.Lib.php');
 
+    // XboxAPI Scraper config (these may be settings you wish to change, such as debug)
+    $config = array(
+        'gamertag_requests' => 5,   // number of attempts to try per gamercard
+        'debug' => FALSE            // are we wanting to debug?
+    );
+
     // initize our lib
-    $xapi = new XboxAPI_Scraper;
+    $xapi = new XboxAPI_Scraper($config);
 
     // gather our profile data
     $profile = $xapi->profile('djekl');

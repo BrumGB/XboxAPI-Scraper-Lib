@@ -3,14 +3,19 @@
 class XboxAPI_Scraper {
 
 //=================================================================================
-// :vars
+// :constants
 //=================================================================================
 
     // scraper version
-    private $XboxAPI_Scraper_VERSION = 1.0;
+    const XBOXAPI_SCRAPER_VERSION = 1.0;
 
-    // the time units array
-    private $units = array(
+
+//=================================================================================
+// :vars
+//=================================================================================
+
+    // time units array
+    public $units = array(
         "year"   => 29030400, // seconds in a year   (12 months)
         "month"  => 2419200,  // seconds in a month  (4 weeks)
         "week"   => 604800,   // seconds in a week   (7 days)
@@ -20,28 +25,47 @@ class XboxAPI_Scraper {
         "second" => 1         // 1 second
     );
 
-    // the current API limit
-    private $API_Limit = 150;
-
-    // the current API usage
-    private $API_Limit_current = 0;
-
-    // number of attempts to try per gamercard
-    private $gamertag_requests = 5;
-
-    // the number of current requests
-    private $gamertag_attempts = 0;
-
-    // if we have any errors they will be set here to be called later
-    private $error = FALSE;
-
-    // are we wanting to debug?
-    private $debug = FALSE;
+    private $config = array();
 
 
 //=================================================================================
 // :public
 //=================================================================================
+
+    /**
+     * constructor - Sets some default prefs.
+     *
+     * the constructor can be passed an array of config values however this is not
+     * needed unless you wish to do some customization of your own.
+     */
+    public function __construct( $options = array() )
+    {
+        // default configuration options
+        $this->config = array_merge(
+            array(
+                // the current API limit
+                'API_Limit' => 150,
+
+                // the current API usage
+                'API_Limit_current' => 0,
+
+                // number of attempts to try per gamercard
+                'gamertag_requests' => 5,
+
+                // the number of current requests
+                'gamertag_attempts' => 0,
+
+                // if we have any errors they will be set here to be called later
+                'error' => FALSE,
+
+                // are we wanting to debug?
+                'debug' => FALSE
+            ),
+            $options
+        );
+    }
+    // --------------------------------------------------------------------
+
 
     /**
      * public function profile()
@@ -113,7 +137,7 @@ class XboxAPI_Scraper {
      */
     public function error()
     {
-        return $this->error;
+        return $this->config['error'];
     }
     //------------------------------------------------------------------
 
@@ -132,11 +156,11 @@ class XboxAPI_Scraper {
         if ( !$this->limit_check() )
         {
             // set the error and return FALSE
-            $this->error =  "API limit exceeded";
+            $this->config['error'] =  "API limit exceeded";
 
             // if were doing a debug, print out
-            if ( $this->debug )
-                print $this->error . PHP_EOL;
+            if ( $this->config['debug'] )
+                print $this->config['error'] . PHP_EOL;
 
             return FALSE;
         }
@@ -145,11 +169,11 @@ class XboxAPI_Scraper {
             // do we have a gamertag?
             if ( !$gamertag )
             {
-                $this->error = "no gamertag specified";
+                $this->config['error'] = "no gamertag specified";
 
                 // if were doing a debug, print out
-                if ( $this->debug )
-                    print $this->error . PHP_EOL;
+                if ( $this->config['debug'] )
+                    print $this->config['error'] . PHP_EOL;
 
                 return FALSE;
             }
@@ -157,32 +181,32 @@ class XboxAPI_Scraper {
             // do we have a game id if we want achievements?
             if ( $type == 'achievements' && !$game_id )
             {
-                $this->error = "no game id specified";
+                $this->config['error'] = "no game id specified";
 
                 // if were doing a debug, print out
-                if ( $this->debug )
-                    print $this->error . PHP_EOL;
+                if ( $this->config['debug'] )
+                    print $this->config['error'] . PHP_EOL;
 
                 return FALSE;
             }
 
             // have we tried to get this data 5 times already? (configured by $gamertag_requests)
-            if ( $this->gamertag_attempts >= $this->gamertag_requests )
+            if ( $this->config['gamertag_attempts'] >= $this->config['gamertag_requests'] )
             {
                 // if were doing a debug, print out
-                if ( $this->debug )
-                    print $this->error . PHP_EOL;
+                if ( $this->config['debug'] )
+                    print $this->config['error'] . PHP_EOL;
 
                 return FALSE;
             }
 
             // add 1 to the gamertag attempts
-            $this->gamertag_attempts++;
+            $this->config['gamertag_attempts']++;
 
             // print the attempt number
             // if were doing a debug, print out
-            if ( $this->debug )
-                print "attempt " . $this->gamertag_attempts . " of " . $this->gamertag_requests;
+            if ( $this->config['debug'] )
+                print "attempt " . $this->config['gamertag_attempts'] . " of " . $this->config['gamertag_requests'];
 
             // build up the url we wish to collect from
             switch ( $type )
@@ -208,7 +232,7 @@ class XboxAPI_Scraper {
             $ch = curl_init();
             $timeout = 600;
             curl_setopt($ch, CURLOPT_URL,               $url);
-            curl_setopt($ch, CURLOPT_USERAGENT,         "XboxAPI Scraper v" . $this->XboxAPI_Scraper_VERSION);
+            curl_setopt($ch, CURLOPT_USERAGENT,         "XboxAPI Scraper v" . self::XBOXAPI_SCRAPER_VERSION);
             curl_setopt($ch, CURLOPT_TIMEOUT,           $timeout);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT,    $timeout);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER,    TRUE);
@@ -222,11 +246,11 @@ class XboxAPI_Scraper {
             if ( !$data )
             {
                 // set and print the error
-                $this->error = "invalid JSON data trying again...";
+                $this->config['error'] = "invalid JSON data trying again...";
 
                 // if were doing a debug, print out
-                if ( $this->debug )
-                    print $this->error . PHP_EOL;
+                if ( $this->config['debug'] )
+                    print $this->config['error'] . PHP_EOL;
 
                 // lets try again shall we...
                 $this->fetch_data( $gamertag, $type, $game_id );
@@ -239,11 +263,11 @@ class XboxAPI_Scraper {
                 if ( !$data->Success )
                 {
                     // set the error
-                    $this->error =  $data->Error;
+                    $this->config['error'] =  $data->Error;
 
                     // if were doing a debug, print out
-                    if ( $this->debug )
-                        print $this->error . PHP_EOL;
+                    if ( $this->config['debug'] )
+                        print $this->config['error'] . PHP_EOL;
 
                     // lets try again shall we...
                     $this->fetch_data( $gamertag, $type, $game_id );
@@ -253,11 +277,11 @@ class XboxAPI_Scraper {
                 elseif ( !$this->limit_check( $data->API_Limit ) )
                 {
                     // set the error and return FALSE
-                    $this->error =  "API limit exceeded";
+                    $this->config['error'] =  "API limit exceeded";
 
                     // if were doing a debug, print out
-                    if ( $this->debug )
-                        print $this->error . PHP_EOL;
+                    if ( $this->config['debug'] )
+                        print $this->config['error'] . PHP_EOL;
 
                     return FALSE;
                 }
@@ -284,9 +308,9 @@ class XboxAPI_Scraper {
     private function limit_check( $input = FALSE )
     {
         if ( $input != FALSE )
-            list( $this->API_Limit_current, $this->API_Limit ) = explode( '/', $input );
+            list( $this->config['API_Limit_current'], $this->config['API_Limit'] ) = explode( '/', $input );
 
-        if ( $this->API_Limit_current < $this->API_Limit )
+        if ( $this->config['API_Limit_current'] < $this->config['API_Limit'] )
             return TRUE;
 
         return FALSE;
