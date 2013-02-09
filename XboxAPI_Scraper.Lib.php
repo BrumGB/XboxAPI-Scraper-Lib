@@ -323,7 +323,7 @@ class XboxAPI_Scraper {
 
             if(strpos($data, '/') != FALSE)
             {
-                list( $this->config['API_Limit_current'], $this->config['API_Limit'] ) = explode( '/', $input );
+                list( $this->config['API_Limit_current'], $this->config['API_Limit'] ) = explode( '/', $data );
             }
             else
             {
