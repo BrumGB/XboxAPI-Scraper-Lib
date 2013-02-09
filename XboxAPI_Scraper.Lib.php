@@ -1,7 +1,7 @@
 <?php
 
 // scraper version
-define('XBOXAPI_SCRAPER_VERSION', '1.0');
+define('XBOXAPI_SCRAPER_VERSION', '1.2');
 
 class XboxAPI_Scraper {
 
@@ -303,8 +303,36 @@ class XboxAPI_Scraper {
     private function limit_check( $input = FALSE )
     {
         if ( $input != FALSE )
+        {
             list( $this->config['API_Limit_current'], $this->config['API_Limit'] ) = explode( '/', $input );
+        }
+        else
+        {
+            // no input given, lets call the limit uri and get our current
+            $ch      = curl_init();
+            $timeout = 60;
+            curl_setopt($ch, CURLOPT_URL,               'https://xboxapi.com/limit/');
+            curl_setopt($ch, CURLOPT_USERAGENT,         "XboxAPI Scraper v" . XBOXAPI_SCRAPER_VERSION . ' [LIMIT CHECK]');
+            curl_setopt($ch, CURLOPT_TIMEOUT,           $timeout);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT,    $timeout);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER,    TRUE);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER,    FALSE);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST,    FALSE);
+            $data = curl_exec($ch);
+            curl_close($ch);
 
+            if(strpos($data, '/') != FALSE)
+            {
+                list( $this->config['API_Limit_current'], $this->config['API_Limit'] ) = explode( '/', $input );
+            }
+            else
+            {
+                // set the error
+                $this->config['error'] = 'Error retrieveing current limit from XboxAPI...';
+            }
+        }
+
+        // lets do a check against the current data to see if we are over or under the limit
         if ( $this->config['API_Limit_current'] < $this->config['API_Limit'] )
             return TRUE;
 
