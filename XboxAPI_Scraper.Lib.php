@@ -10,7 +10,7 @@ class XboxAPI_Scraper {
 //=================================================================================
 
     // time units array
-    public $units = array(
+    var $units = array(
         "year"   => 29030400, // seconds in a year   (12 months)
         "month"  => 2419200,  // seconds in a month  (4 weeks)
         "week"   => 604800,   // seconds in a week   (7 days)
@@ -20,7 +20,7 @@ class XboxAPI_Scraper {
         "second" => 1         // 1 second
     );
 
-    private $config = array();
+    var $config = array();
 
 
 //=================================================================================
