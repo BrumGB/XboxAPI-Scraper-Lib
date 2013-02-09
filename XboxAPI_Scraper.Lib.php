@@ -1,14 +1,9 @@
 <?php
 
+// scraper version
+define('XBOXAPI_SCRAPER_VERSION', '1.0');
+
 class XboxAPI_Scraper {
-
-//=================================================================================
-// :constants
-//=================================================================================
-
-    // scraper version
-    const XBOXAPI_SCRAPER_VERSION = 1.0;
-
 
 //=================================================================================
 // :vars
@@ -232,7 +227,7 @@ class XboxAPI_Scraper {
             $ch = curl_init();
             $timeout = 600;
             curl_setopt($ch, CURLOPT_URL,               $url);
-            curl_setopt($ch, CURLOPT_USERAGENT,         "XboxAPI Scraper v" . self::XBOXAPI_SCRAPER_VERSION);
+            curl_setopt($ch, CURLOPT_USERAGENT,         "XboxAPI Scraper v" . XBOXAPI_SCRAPER_VERSION);
             curl_setopt($ch, CURLOPT_TIMEOUT,           $timeout);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT,    $timeout);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER,    TRUE);
