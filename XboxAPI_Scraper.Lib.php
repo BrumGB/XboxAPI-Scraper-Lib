@@ -1,7 +1,7 @@
 <?php
 
 // scraper version
-define('XBOXAPI_SCRAPER_VERSION', '1.2');
+define('XBOXAPI_SCRAPER_VERSION', '1.21');
 
 class XboxAPI_Scraper {
 
@@ -226,13 +226,14 @@ class XboxAPI_Scraper {
             // fetch the JSON data via CURL
             $ch = curl_init();
             $timeout = 600;
-            curl_setopt($ch, CURLOPT_URL,               $url);
-            curl_setopt($ch, CURLOPT_USERAGENT,         "XboxAPI Scraper v" . XBOXAPI_SCRAPER_VERSION);
-            curl_setopt($ch, CURLOPT_TIMEOUT,           $timeout);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT,    $timeout);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER,    TRUE);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER,    FALSE);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST,    FALSE);
+            curl_setopt($ch, CURLOPT_URL,            $url);
+            curl_setopt($ch, CURLOPT_USERAGENT,      "XboxAPI Scraper v" . XBOXAPI_SCRAPER_VERSION);
+            curl_setopt($ch, CURLOPT_TIMEOUT,        $timeout);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+            curl_setopt($ch, CURLOPT_SSLVERSION,     3);
             $data = curl_exec($ch);
             curl_close($ch);
 
