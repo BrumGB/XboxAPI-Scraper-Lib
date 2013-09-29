@@ -1,7 +1,7 @@
 <?php
 
 // scraper version
-define('XBOXAPI_SCRAPER_VERSION', '1.21');
+define('XBOXAPI_SCRAPER_VERSION', '1.22');
 
 class XboxAPI_Scraper {
 
@@ -224,18 +224,7 @@ class XboxAPI_Scraper {
             }
 
             // fetch the JSON data via CURL
-            $ch = curl_init();
-            $timeout = 600;
-            curl_setopt($ch, CURLOPT_URL,            $url);
-            curl_setopt($ch, CURLOPT_USERAGENT,      "XboxAPI Scraper v" . XBOXAPI_SCRAPER_VERSION);
-            curl_setopt($ch, CURLOPT_TIMEOUT,        $timeout);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
-            curl_setopt($ch, CURLOPT_SSLVERSION,     3);
-            $data = curl_exec($ch);
-            curl_close($ch);
+            $data = $this->curl('url');
 
             // do we have valid JSON?
             $data = json_decode( $data );
@@ -310,17 +299,7 @@ class XboxAPI_Scraper {
         else
         {
             // no input given, lets call the limit uri and get our current
-            $ch      = curl_init();
-            $timeout = 60;
-            curl_setopt($ch, CURLOPT_URL,               'https://xboxapi.com/limit/');
-            curl_setopt($ch, CURLOPT_USERAGENT,         "XboxAPI Scraper v" . XBOXAPI_SCRAPER_VERSION . ' [LIMIT CHECK]');
-            curl_setopt($ch, CURLOPT_TIMEOUT,           $timeout);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT,    $timeout);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER,    TRUE);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER,    FALSE);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST,    FALSE);
-            $data = curl_exec($ch);
-            curl_close($ch);
+            $data = curl('https://xboxapi.com/limit/');
 
             if(strpos($data, '/') != FALSE)
             {
@@ -338,6 +317,38 @@ class XboxAPI_Scraper {
             return TRUE;
 
         return FALSE;
+    }
+    //------------------------------------------------------------------
+
+
+    /**
+     * private limit_check()
+     * this is used to check our API limit from XboxAPI.com
+     *
+     * @param input - the API limit text responce
+     * @return bool
+     */
+    private function curl( $url = FALSE )
+    {
+        if ( $input != FALSE )
+        {
+            return FALSE;
+        }
+
+        $ch = curl_init();
+        $timeout = 60;
+        curl_setopt($ch, CURLOPT_URL,            $url);
+        curl_setopt($ch, CURLOPT_USERAGENT,      "XboxAPI Scraper v" . XBOXAPI_SCRAPER_VERSION);
+        curl_setopt($ch, CURLOPT_TIMEOUT,        $timeout);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+        curl_setopt($ch, CURLOPT_SSLVERSION,     3);
+        $data = curl_exec($ch);
+        curl_close($ch);
+
+        return $data;
     }
     //------------------------------------------------------------------
 
