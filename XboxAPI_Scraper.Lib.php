@@ -1,7 +1,7 @@
 <?php
 
 // scraper version
-define('XBOXAPI_SCRAPER_VERSION', '1.22');
+define('XBOXAPI_SCRAPER_VERSION', '1.3');
 
 class XboxAPI_Scraper {
 
@@ -207,19 +207,19 @@ class XboxAPI_Scraper {
             switch ( $type )
             {
                 case 'profile':
-                    $url = "https://xboxapi.com/json/profile/" . strtolower( urlencode( $gamertag ) );
+                    $url = "https://xboxapi.com/v1/json/profile/" . strtolower( urlencode( $gamertag ) );
                     break;
 
                 case 'games':
-                    $url = "https://xboxapi.com/json/games/" . strtolower( urlencode( $gamertag ) );
+                    $url = "https://xboxapi.com/v1/json/games/" . strtolower( urlencode( $gamertag ) );
                     break;
 
                 case 'achievements':
-                    $url = "https://xboxapi.com/json/achievements/" . $game_id . "/" . strtolower( urlencode( $gamertag ) );
+                    $url = "https://xboxapi.com/v1/json/achievements/" . $game_id . "/" . strtolower( urlencode( $gamertag ) );
                     break;
 
                 default:
-                    $url = "https://xboxapi.com/json/profile/" . strtolower( urlencode( $gamertag ) );
+                    $url = "https://xboxapi.com/v1/json/profile/" . strtolower( urlencode( $gamertag ) );
                     break;
             }
 
@@ -299,7 +299,7 @@ class XboxAPI_Scraper {
         else
         {
             // no input given, lets call the limit uri and get our current
-            $data = curl('https://xboxapi.com/limit/');
+            $data = curl('https://xboxapi.com/v1/limit/');
 
             if(strpos($data, '/') != FALSE)
             {
